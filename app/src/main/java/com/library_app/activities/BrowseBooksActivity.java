@@ -1,0 +1,191 @@
+package com.library_app.activities;
+
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import com.library_app.R;
+import com.library_app.Utils.NavigationUtils;
+import com.library_app.adapter.BookCardsAdapter;
+import com.library_app.callbacks.FollowBookCallback;
+import com.library_app.callbacks.GetBooksCallback;
+import com.library_app.callbacks.ReserveBookCallback;
+import com.library_app.callbacks.UpvoteBookCallback;
+import com.library_app.controller.AuthenticationController;
+import com.library_app.controller.ReaderController;
+import com.library_app.model.Book;
+import com.mikepenz.materialdrawer.Drawer;
+
+import java.util.List;
+
+public class BrowseBooksActivity extends AppCompatActivity implements BookCardsAdapter.Listener
+{
+
+    /* UI */
+    Drawer navigationDrawer;
+    View content;
+    RecyclerView recyclerViewGroups;
+    SwipeRefreshLayout swipeRefresh;
+
+    /* fields */
+    ReaderController controller;
+    BookCardsAdapter adapterCards;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        // setup layout
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_browse_books);
+        content = findViewById(R.id.content);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Books");
+        navigationDrawer = NavigationUtils.setupNavigationBar(this, 0, toolbar);
+
+        // reference views
+        recyclerViewGroups = (RecyclerView) findViewById(R.id.recyclerViewBooks);
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+
+        // setup listeners
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+        {
+            @Override
+            public void onRefresh()
+            {
+                loadBooks();
+            }
+        });
+
+        // setup list
+        adapterCards = new BookCardsAdapter(this);
+        adapterCards.setListener(this);
+        recyclerViewGroups.setAdapter(adapterCards);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        recyclerViewGroups.setLayoutManager(gridLayoutManager);
+
+        // load data
+        controller = new ReaderController(this, AuthenticationController.getCurrentUser().getId());
+        loadBooks();
+
+    }
+
+    private void loadBooks()
+    {
+        // start swipe refersh refershing
+        swipeRefresh.post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                swipeRefresh.setRefreshing(true);
+            }
+        });
+
+        controller.getBooks(new GetBooksCallback()
+        {
+            @Override
+            public void success(List<Book> books)
+            {
+                swipeRefresh.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        swipeRefresh.setRefreshing(false);
+
+                    }
+                });
+                adapterCards.setData(books);
+            }
+
+            @Override
+            public void fail(String message)
+            {
+                swipeRefresh.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        swipeRefresh.setRefreshing(false);
+
+                    }
+                });
+                Snackbar.make(content, message, Snackbar.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if (navigationDrawer.isDrawerOpen())
+            navigationDrawer.closeDrawer();
+        else
+            super.onBackPressed();
+    }
+
+    @Override
+    public void upvote(Book book)
+    {
+        controller.upvoteBook(book.getIsbn(), new UpvoteBookCallback()
+        {
+            @Override
+            public void success()
+            {
+                Snackbar.make(content, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+                loadBooks();
+            }
+
+            @Override
+            public void fail(String message)
+            {
+                Snackbar.make(content, message, Snackbar.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void reserve(Book book)
+    {
+        controller.reserveBook(book.getIsbn(), new ReserveBookCallback()
+        {
+            @Override
+            public void success()
+            {
+                Snackbar.make(content, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+                loadBooks();
+            }
+
+            @Override
+            public void fail(String message)
+            {
+                Snackbar.make(content, message, Snackbar.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void follow(Book book)
+    {
+        controller.followBook(book.getIsbn(), new FollowBookCallback()
+        {
+            @Override
+            public void success()
+            {
+                Snackbar.make(content, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+                loadBooks();
+            }
+
+            @Override
+            public void fail(String message)
+            {
+                Snackbar.make(content, message, Snackbar.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
