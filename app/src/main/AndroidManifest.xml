@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.library_app"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="com.library_app"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -25,12 +28,11 @@
         </activity>
         <activity
             android:name=".activities.BrowseBooksActivity"
-            android:label="@string/title_activity_browse_books">
-        </activity>
-        <activity android:name=".activities.AddBookActivity">
-        </activity>
-        <activity android:name=".activities.ReservationsActivity">
-        </activity>
+            android:label="@string/title_activity_browse_books"/>
+        <activity android:name=".activities.AddBookActivity"/>
+        <activity android:name=".activities.ReservationsActivity"/>
+        <activity android:name="com.soundcloud.android.crop.CropImageActivity"/>
+
     </application>
 
 </manifest>
