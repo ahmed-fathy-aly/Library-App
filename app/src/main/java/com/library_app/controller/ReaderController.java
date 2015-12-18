@@ -4,11 +4,15 @@ import android.content.Context;
 
 import com.library_app.callbacks.FollowBookCallback;
 import com.library_app.callbacks.GetBooksCallback;
+import com.library_app.callbacks.GetReservationsCallback;
 import com.library_app.callbacks.ReserveBookCallback;
 import com.library_app.callbacks.UpvoteBookCallback;
 import com.library_app.model.Book;
+import com.library_app.model.Reservation;
+import com.library_app.model.User;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -18,13 +22,15 @@ public class ReaderController
 {
     /* fields */
     Context context;
-    String userId;
 
     /* constructor */
-    public ReaderController(Context context, String userId)
+    public ReaderController()
+    {
+    }
+
+    public ReaderController(Context context)
     {
         this.context = context;
-        this.userId = userId;
     }
 
     /* methods */
@@ -45,6 +51,54 @@ public class ReaderController
             book.setnUpvotes(i);
             book.setIsbn(i + "");
             result.add(book);
+        }
+        callback.success(result);
+    }
+
+    /**
+     * returns the list of reservations
+     * The admin gets all reservations, the user only gets his reservation (the backend should handle that)
+     * If the reservation's book is not returned then its returnDate should be null
+     * If the reservation's book is not lent then its lentDate should be null
+     */
+    public void getReservations(GetReservationsCallback callback)
+    {
+        List<Reservation> result = new ArrayList<>();
+        for (int i = 1; i < 20; i++)
+        {
+            Book book = new Book();
+            book.setTitle("book " + i);
+            book.setAuthor("author + " + i);
+            book.setAvailable(i % 3 == 0);
+            book.setImageUrl("http://ecx.images-amazon.com/images/I/519978ZK54L.jpg");
+            book.setnUpvotes(i);
+            book.setIsbn(i + "");
+
+            User user = new User();
+            user.setId(i + "");
+            user.setName("user " + i);
+            user.setMail("mail " + i);
+            user.setType(User.STUDENT);
+
+            Reservation reservation = new Reservation();
+            reservation.setUser(user);
+            reservation.setBook(book);
+
+            Calendar deadline = Calendar.getInstance();
+            deadline.add(Calendar.DAY_OF_YEAR, i * 3);
+            reservation.setDeadlineDate(deadline);
+
+            Calendar lentDate = Calendar.getInstance();
+            lentDate.add(Calendar.DAY_OF_YEAR, i);
+            if (i % 2 == 0)
+                reservation.setLendDate(lentDate);
+
+            Calendar returnDate = Calendar.getInstance();
+            returnDate.add(Calendar.DAY_OF_YEAR, i * 2);
+            if (i % 6 == 0)
+                reservation.setReturnDate(returnDate);
+
+            result.add(reservation);
         }
         callback.success(result);
     }

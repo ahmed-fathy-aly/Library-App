@@ -21,7 +21,7 @@ public class StartActivity extends AppCompatActivity
         Intent intent = new Intent();
         if (user != null)
         {
-            intent.setClass(this, AddBookActivity.class);
+            intent.setClass(this, ReservationsActivity.class);
             intent.putExtra(getString(R.string.canUpvote), user.canVote());
             intent.putExtra(getString(R.string.canReserve), user.canReserve());
             intent.putExtra(getString(R.string.canChangeReservation), user.canChangeReservation());

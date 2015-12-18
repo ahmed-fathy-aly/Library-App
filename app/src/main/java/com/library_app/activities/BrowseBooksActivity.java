@@ -33,7 +33,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
     SwipeRefreshLayout swipeRefresh;
 
     /* fields */
-    ReaderController controller;
     BookCardsAdapter adapterCards;
 
     @Override
@@ -45,13 +44,13 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
 
         // get extras
         boolean canUpvote = getIntent().getBooleanExtra(getString(R.string.canUpvote), false);
-        boolean canReserve= getIntent().getBooleanExtra(getString(R.string.canReserve), false);
+        boolean canReserve = getIntent().getBooleanExtra(getString(R.string.canReserve), false);
 
         // setup navdrawer and toolbar
         content = findViewById(R.id.content);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Books");
-        navigationDrawer = NavigationUtils.setupNavigationBar(this, 0, toolbar);
+        navigationDrawer = NavigationUtils.setupNavigationBar(this, 1, toolbar);
 
         // reference views
         recyclerViewGroups = (RecyclerView) findViewById(R.id.recyclerViewBooks);
@@ -75,7 +74,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
         recyclerViewGroups.setLayoutManager(gridLayoutManager);
 
         // load data
-        controller = new ReaderController(this, AuthenticationController.getCurrentUser().getId());
         loadBooks();
 
     }
@@ -101,7 +99,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
                 swipeRefresh.setRefreshing(true);
             }
         });
-
+        ReaderController controller = new ReaderController(this);
         controller.getBooks(new GetBooksCallback()
         {
             @Override
@@ -140,6 +138,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
     @Override
     public void upvote(Book book)
     {
+        ReaderController controller = new ReaderController(this);
         controller.upvoteBook(book.getIsbn(), new UpvoteBookCallback()
         {
             @Override
@@ -160,6 +159,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
     @Override
     public void reserve(Book book)
     {
+        ReaderController controller = new ReaderController(this);
         controller.reserveBook(book.getIsbn(), new ReserveBookCallback()
         {
             @Override
@@ -180,6 +180,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
     @Override
     public void follow(Book book)
     {
+        ReaderController controller = new ReaderController(this);
         controller.followBook(book.getIsbn(), new FollowBookCallback()
         {
             @Override

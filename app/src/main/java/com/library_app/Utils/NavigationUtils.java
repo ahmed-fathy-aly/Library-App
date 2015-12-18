@@ -32,10 +32,10 @@ public class NavigationUtils
     /**
      * sets up the navigation drawer in the actibity
      *
-     * @param id      the id of the menu item correspoding to the activity
-     * @param toolbar the activitie's toolbar, to add a burger icon
+     * @param itemToBeSelectedId the id of the menu item correspoding to the activity
+     * @param toolbar            the activitie's toolbar, to add a burger icon
      */
-    public static Drawer setupNavigationBar(final AppCompatActivity activity, int id, Toolbar toolbar)
+    public static Drawer setupNavigationBar(final AppCompatActivity activity, final int itemToBeSelectedId, Toolbar toolbar)
     {
         // get the current user
         final User user = AuthenticationController.getCurrentUser();
@@ -69,6 +69,8 @@ public class NavigationUtils
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem)
             {
                 int id = drawerItem.getIdentifier();
+                if (id == itemToBeSelectedId)
+                    return false;
 
                 // launch another activity
                 if (id <= 3)
@@ -106,6 +108,7 @@ public class NavigationUtils
 
 
         Drawer drawer = builder.build();
+        drawer.setSelection(itemToBeSelectedId);
         return drawer;
     }
 }

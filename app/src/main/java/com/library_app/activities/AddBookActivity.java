@@ -2,9 +2,9 @@ package com.library_app.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
 import com.library_app.R;
 import com.library_app.Utils.NavigationUtils;
 import com.library_app.Utils.PhotoFileUtils;
@@ -42,7 +41,6 @@ public class AddBookActivity extends AppCompatActivity
 
     /* fields */
     File imageFile;
-    private AdminController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -51,15 +49,11 @@ public class AddBookActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_book);
 
-        // get extras
-        boolean canUpvote = getIntent().getBooleanExtra(getString(R.string.canUpvote), false);
-        boolean canReserve = getIntent().getBooleanExtra(getString(R.string.canReserve), false);
-
         // setup navdrawer and toolbar
         content = findViewById(R.id.content);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Add Book");
-        navigationDrawer = NavigationUtils.setupNavigationBar(this, 1, toolbar);
+        navigationDrawer = NavigationUtils.setupNavigationBar(this, 2, toolbar);
 
         // reference views
         editTextISBN = (EditText) findViewById(R.id.editTextISBN);
@@ -98,8 +92,6 @@ public class AddBookActivity extends AppCompatActivity
             }
         });
 
-        // setup controller
-        controller = new AdminController(this, AuthenticationController.getCurrentUser().getId());
 
         // prepare temp image file
         try
@@ -111,6 +103,14 @@ public class AddBookActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        if (navigationDrawer.isDrawerOpen())
+            navigationDrawer.closeDrawer();
+        else
+            super.onBackPressed();
+    }
 
     /**
      * changes the visibility of the UI only needed for new books not just new coies
@@ -140,6 +140,7 @@ public class AddBookActivity extends AppCompatActivity
         // upload new book
         progressBar.setVisibility(View.VISIBLE);
         buttonAddBook.setVisibility(View.INVISIBLE);
+        AdminController controller = new AdminController(this);
         controller.addBook(isbn, isn, title, author, imageFile, new AddBookCallback()
         {
             @Override
@@ -181,7 +182,7 @@ public class AddBookActivity extends AppCompatActivity
 
                 case Crop.REQUEST_CROP:
                     Uri uri = Crop.getOutput(data);
-                    Glide.with(this).load(uri).into(imageViewCover);
+                    imageViewCover.setImageURI(uri);
                     break;
             }
     }
