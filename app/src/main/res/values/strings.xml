@@ -3,4 +3,7 @@
     <string name="title_activity_browse_books">BrowseBooksActivity</string>
     <string name="title_activity_blank">BlankActivity</string>
     <string name="success">successful</string>
+    <string name="canUpvote">canVote</string>
+    <string name="canReserve">canReserver</string>
+    <string name="canChangeReservation">canChangeReservation</string>
 </resources>

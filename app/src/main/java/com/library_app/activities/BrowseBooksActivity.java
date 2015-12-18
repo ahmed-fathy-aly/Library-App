@@ -42,6 +42,12 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
         // setup layout
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse_books);
+
+        // get extras
+        boolean canUpvote = getIntent().getBooleanExtra(getString(R.string.canUpvote), false);
+        boolean canReserve= getIntent().getBooleanExtra(getString(R.string.canReserve), false);
+
+        // setup navdrawer and toolbar
         content = findViewById(R.id.content);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Books");
@@ -62,7 +68,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
         });
 
         // setup list
-        adapterCards = new BookCardsAdapter(this);
+        adapterCards = new BookCardsAdapter(this, canReserve, canUpvote);
         adapterCards.setListener(this);
         recyclerViewGroups.setAdapter(adapterCards);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
@@ -73,6 +79,16 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
         loadBooks();
 
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        if (navigationDrawer.isDrawerOpen())
+            navigationDrawer.closeDrawer();
+        else
+            super.onBackPressed();
+    }
+
 
     private void loadBooks()
     {
@@ -120,14 +136,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
         });
     }
 
-    @Override
-    public void onBackPressed()
-    {
-        if (navigationDrawer.isDrawerOpen())
-            navigationDrawer.closeDrawer();
-        else
-            super.onBackPressed();
-    }
 
     @Override
     public void upvote(Book book)

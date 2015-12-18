@@ -63,4 +63,20 @@ public class User
     {
         this.type = type;
     }
+
+    /* methods */
+    public boolean canVote()
+    {
+        return type.equals(PROFESSOR);
+    }
+
+    public boolean canReserve()
+    {
+        return type.equals(PROFESSOR) || type.equals(STUDENT);
+    }
+
+    public boolean canChangeReservation()
+    {
+        return type.equals(ADMIN);
+    }
 }

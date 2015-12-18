@@ -18,8 +18,8 @@ public class AuthenticationController
         User user = new User();
 
         user.setId("1");
-        user.setName("Van Persi");
-        user.setMail("rbp@mail.com");
+        user.setName("Mr Admin");
+        user.setMail("admin@mail.com");
         user.setType(User.ADMIN);
 
         return user;

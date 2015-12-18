@@ -1,10 +1,15 @@
 package com.library_app.Utils;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.library_app.R;
+import com.library_app.activities.AddBookActivity;
+import com.library_app.activities.BrowseBooksActivity;
+import com.library_app.activities.ReservationsActivity;
 import com.library_app.controller.AuthenticationController;
 import com.library_app.model.User;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -27,13 +32,13 @@ public class NavigationUtils
     /**
      * sets up the navigation drawer in the actibity
      *
-     * @param id the id of the menu item correspoding to the activity
+     * @param id      the id of the menu item correspoding to the activity
      * @param toolbar the activitie's toolbar, to add a burger icon
      */
-    public static Drawer setupNavigationBar(AppCompatActivity activity, int id, Toolbar toolbar)
+    public static Drawer setupNavigationBar(final AppCompatActivity activity, int id, Toolbar toolbar)
     {
         // get the current user
-        User user = AuthenticationController.getCurrentUser();
+        final User user = AuthenticationController.getCurrentUser();
 
         // profile header
         ProfileDrawerItem userProfile = new ProfileDrawerItem().withName(user.getName());
@@ -51,17 +56,49 @@ public class NavigationUtils
                 .withToolbar(toolbar);
         if (user.getType().equals(User.ADMIN))
         {
-            builder.addDrawerItems(new PrimaryDrawerItem().withIdentifier(0).withName("Browse")
-                    , new PrimaryDrawerItem().withIdentifier(1).withName("Add Book")
+            builder.addDrawerItems(new PrimaryDrawerItem().withIdentifier(1).withName("Browse Books")
+                    , new PrimaryDrawerItem().withIdentifier(2).withName("Add Book")
+                    , new PrimaryDrawerItem().withIdentifier(3).withName("Reservations")
                     , new DividerDrawerItem()
-                    , new PrimaryDrawerItem().withIdentifier(2).withName("Log Out"));
+                    , new PrimaryDrawerItem().withIdentifier(10).withName("Log Out"));
         }
+
         builder.withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener()
         {
             @Override
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem)
             {
                 int id = drawerItem.getIdentifier();
+
+                // launch another activity
+                if (id <= 3)
+                {
+                    // select the activity
+                    final Intent intent = new Intent();
+                    if (id == 1)
+                        intent.setClass(activity, BrowseBooksActivity.class);
+                    else if (id == 2)
+                        intent.setClass(activity, AddBookActivity.class);
+                    else if (id == 3)
+                        intent.setClass(activity, ReservationsActivity.class);
+
+                    // add the extras
+                    intent.putExtra(activity.getString(R.string.canUpvote), user.canVote());
+                    intent.putExtra(activity.getString(R.string.canReserve), user.canReserve());
+                    intent.putExtra(activity.getString(R.string.canChangeReservation), user.canChangeReservation());
+
+                    // launch the activity after some milliseconds to show the drawer close animation
+                    android.os.Handler handler = new android.os.Handler();
+                    handler.postDelayed(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            activity.startActivity(intent);
+                            activity.finish();
+                        }
+                    }, 500);
+                }
 
                 return false;
             }

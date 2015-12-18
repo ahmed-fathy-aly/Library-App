@@ -27,12 +27,16 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
     Context context;
     List<Book> data;
     Listener listener;
+    boolean canReserve;
+    boolean canUpvote;
 
     /* constructor */
-    public BookCardsAdapter(Context context)
+    public BookCardsAdapter(Context context, boolean canReserve, boolean canUpvote)
     {
         this.context = context;
         this.data = new ArrayList<>();
+        this.canReserve = canReserve;
+        this.canUpvote = canUpvote;
     }
 
     /* methods */
@@ -133,6 +137,10 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
                     }
                 }
             });
+
+            // disable stuff based on privilliges
+            buttonReserverOrFollow.setVisibility(canReserve ?  View.VISIBLE : View.GONE);
+            imageButtonUpvote.setEnabled(canUpvote);
         }
 
     }
