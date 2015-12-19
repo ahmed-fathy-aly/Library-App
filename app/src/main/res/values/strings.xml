@@ -6,4 +6,11 @@
     <string name="canUpvote">canVote</string>
     <string name="canReserve">canReserver</string>
     <string name="canChangeReservation">canChangeReservation</string>
+
+    <string-array
+        name="searchCriteria">
+        <item>Title</item>
+        <item>Author</item>
+        <item>ISBN</item>
+    </string-array>
 </resources>

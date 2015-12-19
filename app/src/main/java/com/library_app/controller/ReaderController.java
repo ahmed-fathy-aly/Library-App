@@ -6,6 +6,7 @@ import com.library_app.callbacks.FollowBookCallback;
 import com.library_app.callbacks.GetBooksCallback;
 import com.library_app.callbacks.GetReservationsCallback;
 import com.library_app.callbacks.ReserveBookCallback;
+import com.library_app.callbacks.SearchBooksCallback;
 import com.library_app.callbacks.UpvoteBookCallback;
 import com.library_app.model.Book;
 import com.library_app.model.Reservation;
@@ -55,6 +56,29 @@ public class ReaderController
         callback.success(result);
     }
 
+    /**
+     * returns the list of the books that meets the search criteria
+     * @param serachCriteria Title or Author or ISBN
+     * @param str the substring used for searching
+     *
+     */
+    public void searchBooks(String serachCriteria, String str, SearchBooksCallback callback)
+    {
+        List<Book> result = new ArrayList<>();
+        for (int i = 1; i < 15; i++)
+        {
+            Book book = new Book();
+            book.setTitle( str + " " + i);
+            book.setAuthor(str + " " + i);
+            book.setAvailable(i % 3 == 0);
+            book.setImageUrl("http://ecx.images-amazon.com/images/I/519978ZK54L.jpg");
+            book.setnUpvotes(i);
+            book.setIsbn(str + " " + i);
+
+            result.add(book);
+        }
+        callback.success(result);
+    }
     /**
      * returns the list of reservations
      * The admin gets all reservations, the user only gets his reservation (the backend should handle that)
