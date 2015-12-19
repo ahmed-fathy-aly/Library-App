@@ -61,6 +61,12 @@ public class NavigationUtils
                     , new PrimaryDrawerItem().withIdentifier(3).withName("Reservations")
                     , new DividerDrawerItem()
                     , new PrimaryDrawerItem().withIdentifier(10).withName("Log Out"));
+        } else if (user.getType().equals(User.STUDENT) || user.getType().equals(User.PROFESSOR))
+        {
+            builder.addDrawerItems(new PrimaryDrawerItem().withIdentifier(1).withName("Browse Books")
+                    , new PrimaryDrawerItem().withIdentifier(3).withName("Reservations")
+                    , new DividerDrawerItem()
+                    , new PrimaryDrawerItem().withIdentifier(10).withName("Log Out"));
         }
 
         builder.withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener()

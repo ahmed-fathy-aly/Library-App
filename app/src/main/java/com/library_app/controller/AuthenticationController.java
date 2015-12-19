@@ -20,7 +20,7 @@ public class AuthenticationController
         user.setId("1");
         user.setName("Mr Admin");
         user.setMail("admin@mail.com");
-        user.setType(User.ADMIN);
+        user.setType(User.PROFESSOR);
 
         return user;
     }

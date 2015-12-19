@@ -76,7 +76,7 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
         // set data to view
         holder.textViewBookTitle.setText(book.getTitle());
         holder.textViewnUpvotes.setText(book.getnUpvotes() + "");
-        holder.buttonReserverOrFollow.setText(book.isAvailable() ? "RESERVER" : "FOLLOW");
+        holder.buttonReserverOrFollow.setText(book.isAvailable() ? "RESERVE" : "FOLLOW");
         if (book.getImageUrl() != null)
         {
             Ion.with(holder.imageViewBook)

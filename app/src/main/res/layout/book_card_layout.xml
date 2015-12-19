@@ -45,6 +45,11 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey"
+            />
         <com.library_app.view.SquareImageView
             android:id="@+id/imageViewBook"
             android:layout_width="match_parent"

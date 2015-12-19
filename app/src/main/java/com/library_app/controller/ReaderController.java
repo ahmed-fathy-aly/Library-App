@@ -70,7 +70,7 @@ public class ReaderController
             Book book = new Book();
             book.setTitle( str + " " + i);
             book.setAuthor(str + " " + i);
-            book.setAvailable(i % 3 == 0);
+            book.setAvailable(i % 3 != 0);
             book.setImageUrl("http://ecx.images-amazon.com/images/I/519978ZK54L.jpg");
             book.setnUpvotes(i);
             book.setIsbn(str + " " + i);
@@ -93,7 +93,7 @@ public class ReaderController
             Book book = new Book();
             book.setTitle("book " + i);
             book.setAuthor("author + " + i);
-            book.setAvailable(i % 3 == 0);
+            book.setAvailable(i % 3 != 0);
             book.setImageUrl("http://ecx.images-amazon.com/images/I/519978ZK54L.jpg");
             book.setnUpvotes(i);
             book.setIsbn(i + "");
