@@ -18,11 +18,6 @@
         <activity
             android:name=".activities.StartActivity"
             android:icon="@mipmap/ic_launcher" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.BrowseBooksActivity"
@@ -33,6 +28,16 @@
         <activity android:name=".activities.SignUpActivity" >
         </activity>
         <activity android:name=".activities.LoginActivity" >
+        </activity>
+        <activity android:name=".activities.TestActivity" >
+
+            <!-- TODO : uncomment this and comment the one in the Start activity above to make this the launcher activity -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
     </application>
 

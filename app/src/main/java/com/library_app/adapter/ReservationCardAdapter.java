@@ -130,7 +130,7 @@ public class ReservationCardAdapter extends RecyclerView.Adapter<ReservationCard
                 @Override
                 public void onClick(View v)
                 {
-                    
+
                 }
             });
         }
