@@ -137,7 +137,14 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
                     }
                 }
             });
+            view.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
 
+                }
+            });
             // disable stuff based on privilliges
             buttonReserverOrFollow.setVisibility(canReserve ?  View.VISIBLE : View.GONE);
             imageButtonUpvote.setEnabled(canUpvote);

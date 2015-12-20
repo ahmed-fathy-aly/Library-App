@@ -125,6 +125,14 @@ public class ReservationCardAdapter extends RecyclerView.Adapter<ReservationCard
 
             // check if updaing the status is enabled
             buttonLendOrReturn.setVisibility(canChangeReservation ? View.VISIBLE : View.GONE);
+            view.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    
+                }
+            });
         }
     }
 

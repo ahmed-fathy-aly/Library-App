@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.library_app.R;
 import com.library_app.Utils.NavigationUtils;
@@ -52,7 +53,10 @@ public class AddBookActivity extends AppCompatActivity
         // setup navdrawer and toolbar
         content = findViewById(R.id.content);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Add Book");
+        TextView text = new TextView(this);
+        text.setText("Add Book");
+        text.setTextAppearance(this, android.R.style.TextAppearance_Material_Widget_ActionBar_Title_Inverse);
+        toolbar.addView(text);
         navigationDrawer = NavigationUtils.setupNavigationBar(this, 2, toolbar);
 
         // reference views

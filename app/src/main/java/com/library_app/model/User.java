@@ -6,9 +6,9 @@ package com.library_app.model;
 public class User
 {
     /* constants */
-    public static final String ADMIN = "admin";
-    public static final String STUDENT = "student";
-    public static final String PROFESSOR = "professor";
+    public static final String ADMIN = "Admin";
+    public static final String STUDENT = "Student";
+    public static final String PROFESSOR = "Professor";
 
     /* fields */
     String id;

@@ -5,6 +5,8 @@
     <color name="colorAccent">#FF5722</color>
     <color name="grey">#808080</color>
     <color name="black">#000000</color>
-    <color name="primary_text_material_light">#212121</color>
+    <color name="primary_text_material_light">#f2f2f2</color>
     <color name="primary_text_material_dark">#212121</color>
+    <color name="textColorPrimary">#c5cae9</color>
+    <color name="textColorPrimaryInverse">#212121</color>
 </resources>

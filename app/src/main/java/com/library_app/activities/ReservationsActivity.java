@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.library_app.R;
 import com.library_app.Utils.NavigationUtils;
@@ -47,11 +48,14 @@ public class ReservationsActivity extends AppCompatActivity implements Reservati
         // setup navdrawer and toolbar
         content = findViewById(R.id.content);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Reservations");
+        TextView text = new TextView(this);
+        text.setText("Reservations");
+        text.setTextAppearance(this, android.R.style.TextAppearance_Material_Widget_ActionBar_Title_Inverse);
+        toolbar.addView(text);
         navigationDrawer = NavigationUtils.setupNavigationBar(this, 3, toolbar);
 
         // reference views
-        recyclerViewReservations= (RecyclerView) findViewById(R.id.recyclerViewReservations);
+        recyclerViewReservations = (RecyclerView) findViewById(R.id.recyclerViewReservations);
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
         // setup listeners
@@ -65,10 +69,10 @@ public class ReservationsActivity extends AppCompatActivity implements Reservati
         });
 
         // setup list
-        adapterReservations= new ReservationCardAdapter(this, AuthenticationController.getCurrentUser().canChangeReservation());
+        adapterReservations = new ReservationCardAdapter(this, new AuthenticationController(this).getCurrentUser().canChangeReservation());
         adapterReservations.setListener(this);
         recyclerViewReservations.setAdapter(adapterReservations);
-        LinearLayoutManager  linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerViewReservations.setLayoutManager(linearLayoutManager);
 
         // load data

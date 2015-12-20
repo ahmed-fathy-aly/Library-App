@@ -13,4 +13,12 @@
         <item>Author</item>
         <item>ISBN</item>
     </string-array>
+
+    <string-array
+        name="userType">
+        <item>Admin</item>
+        <item>Student</item>
+        <item>Professor</item>
+    </string-array>
+
 </resources>

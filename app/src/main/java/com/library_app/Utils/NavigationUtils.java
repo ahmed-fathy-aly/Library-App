@@ -10,6 +10,7 @@ import com.library_app.R;
 import com.library_app.activities.AddBookActivity;
 import com.library_app.activities.BrowseBooksActivity;
 import com.library_app.activities.ReservationsActivity;
+import com.library_app.activities.StartActivity;
 import com.library_app.controller.AuthenticationController;
 import com.library_app.model.User;
 import com.mikepenz.materialdrawer.AccountHeader;
@@ -38,7 +39,7 @@ public class NavigationUtils
     public static Drawer setupNavigationBar(final AppCompatActivity activity, final int itemToBeSelectedId, Toolbar toolbar)
     {
         // get the current user
-        final User user = AuthenticationController.getCurrentUser();
+        final User user = new AuthenticationController(activity).getCurrentUser();
 
         // profile header
         ProfileDrawerItem userProfile = new ProfileDrawerItem().withName(user.getName());
@@ -106,6 +107,13 @@ public class NavigationUtils
                             activity.finish();
                         }
                     }, 500);
+                } else if (id == 10)
+                {
+                    // log out
+                    AuthenticationController controller = new AuthenticationController(activity);
+                    controller.logOut();
+                    Intent intent = new Intent(activity, StartActivity.class);
+                    activity.startActivity(intent);
                 }
 
                 return false;

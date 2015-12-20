@@ -17,14 +17,18 @@ public class StartActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         // select which activity to launch
-        User user = AuthenticationController.getCurrentUser();
+        User user = new AuthenticationController(this).getCurrentUser();
         Intent intent = new Intent();
         if (user != null)
         {
-            intent.setClass(this, ReservationsActivity.class);
+            intent.setClass(this, BrowseBooksActivity.class);
             intent.putExtra(getString(R.string.canUpvote), user.canVote());
             intent.putExtra(getString(R.string.canReserve), user.canReserve());
             intent.putExtra(getString(R.string.canChangeReservation), user.canChangeReservation());
+        }
+        else
+        {
+            intent.setClass(this, LoginActivity.class);
         }
         startActivity(intent);
         finish();
