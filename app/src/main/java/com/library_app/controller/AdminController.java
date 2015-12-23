@@ -1,11 +1,17 @@
 package com.library_app.controller;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import com.library_app.callbacks.AddBookCallback;
 import com.library_app.callbacks.MarkAsLentCallback;
 import com.library_app.callbacks.MarkAsReturnedCallback;
 import com.library_app.model.Reservation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 
@@ -27,8 +33,7 @@ public class AdminController extends ReaderController
     /* methods */
 
     /**
-     * adds a copy
-     * It could be a copy of a new book or a copy of an existing book
+     * adds a new book (not a copy)
      *
      * @param isbn      identifier for the book
      * @param isn       identifier for the copy
@@ -36,7 +41,58 @@ public class AdminController extends ReaderController
      * @param author    book's author (if it's a new book)
      * @param imageFile file containing the cover image of the book (leave this one if it's hard to upload it)
      */
-    public void addBook(String isbn, String isn, String title, String author, File imageFile, AddBookCallback callback)
+    public void addBook(String isbn, String isn, String title, String author, File imageFile, final AddBookCallback callback)
+    {
+        Log.e("Game", "token = " + new AuthenticationController(context).getAuthorizationToken());
+        Ion.with(context)
+                .load("POST", "http://library-themonster.rhcloud.com/books/create.json")
+                .addHeader("Authentication ", "Token " + new AuthenticationController(context).getAuthorizationToken())
+                .setBodyParameter("isbn", isbn)
+                .setBodyParameter("isn", isn)
+                .setBodyParameter("title", title)
+                .setBodyParameter("author", author)
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // check errors
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "add book response = " + result);
+
+                        // check if failed
+                        try
+                        {
+                            JSONObject resultJson = new JSONObject(result);
+                            int status = resultJson.getInt("status");
+
+                            if (status != 1)
+                                callback.fail("Failed");
+                            else
+                                callback.success();;
+                            return;
+                        } catch (JSONException e1)
+                        {
+                            e1.printStackTrace();
+                        }
+
+                    }
+                });
+
+    }
+
+    /**
+     * adds a copy of an existing book
+     *
+     * @param isbn the isbn of the original book
+     * @param isn  the isn of the copy
+     */
+    public void addCopy(String isbn, String isn, AddBookCallback callback)
     {
         callback.success();
     }
@@ -56,4 +112,6 @@ public class AdminController extends ReaderController
     {
         callback.success();
     }
+
+
 }

@@ -145,7 +145,9 @@ public class AddBookActivity extends AppCompatActivity
         progressBar.setVisibility(View.VISIBLE);
         buttonAddBook.setVisibility(View.INVISIBLE);
         AdminController controller = new AdminController(this);
-        controller.addBook(isbn, isn, title, author, imageFile, new AddBookCallback()
+
+        // make the callback (to handle the request result)
+        AddBookCallback callback = new AddBookCallback()
         {
             @Override
             public void success()
@@ -162,7 +164,14 @@ public class AddBookActivity extends AppCompatActivity
                 buttonAddBook.setVisibility(View.VISIBLE);
                 Snackbar.make(content, message, Snackbar.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        // either add book or a copy of existing book
+        if (checkBoxIsCopy.isChecked())
+            controller.addCopy(isbn, isn, callback);
+        else
+            controller.addBook(isbn, isn, title, author, imageFile, callback);
+
     }
 
     /**
