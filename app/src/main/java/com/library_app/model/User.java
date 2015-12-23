@@ -1,14 +1,17 @@
 package com.library_app.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by ahmed on 12/17/2015.
  */
 public class User
 {
     /* constants */
-    public static final String ADMIN = "Admin";
-    public static final String STUDENT = "Student";
-    public static final String PROFESSOR = "Professor";
+    public static final String ADMIN = "admin";
+    public static final String STUDENT = "student";
+    public static final String PROFESSOR = "professor";
 
     /* fields */
     String id;
@@ -78,5 +81,16 @@ public class User
     public boolean canChangeReservation()
     {
         return type.equals(ADMIN);
+    }
+
+    public static User parseFromJson(JSONObject json) throws JSONException
+    {
+        User user = new User();
+
+        user.setName(json.getString("name"));
+        user.setMail(json.getString("mail"));
+        user.setType(json.getString("type"));
+
+        return user;
     }
 }

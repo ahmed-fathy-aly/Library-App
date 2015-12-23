@@ -2,10 +2,16 @@ package com.library_app.controller;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import com.library_app.callbacks.LoginCallback;
 import com.library_app.callbacks.SignUpCallback;
 import com.library_app.model.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by ahmed on 12/17/2015.
@@ -32,18 +38,56 @@ public class AuthenticationController
      *
      * @param type Admin or Student Professor
      */
-    public void signUp(String type, String mail, String password, String name, String universityCode, SignUpCallback callback)
+    public void signUp(String type, String mail, String password, String name, String universityCode, final SignUpCallback callback)
     {
-        User user = new User();
-        user.setType(type);
-        user.setMail(mail);
-        user.setName(name);
-        user.setId("142");
-        String authorizationToken = "acxdsfdfdjfdfderwrq";
 
-        setCurrentUser(user, authorizationToken);
+        Ion.with(context)
+                .load("POST", "http://library-themonster.rhcloud.com/users/create.json")
+                .setBodyParameter("mail", mail)
+                .setBodyParameter("name", name)
+                .setBodyParameter("password", password)
+                .setBodyParameter("type", type)
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // check errors
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "sign up result = " + result);
 
-        callback.success(user, authorizationToken);
+                        try
+                        {
+                            // check if failed
+                            JSONObject resultJson = new JSONObject(result);
+                            int status = resultJson.getInt("status");
+                            if (status != 1)
+                            {
+                                callback.fail("Failed");
+                                return;
+                            }
+
+                            // parse response
+                            JSONObject response = resultJson.getJSONObject("response");
+                            JSONObject userObject = response.getJSONObject("user");
+                            User user = User.parseFromJson(userObject);
+                            String token = userObject.getString("token");
+                            setCurrentUser(user, token);
+                            callback.success(user, token);
+
+                        } catch (JSONException e1)
+                        {
+                            e1.printStackTrace();
+                            callback.fail(e1.getMessage());
+                        }
+
+                    }
+                });
 
     }
 
@@ -53,18 +97,55 @@ public class AuthenticationController
      * these results will be saved in the pereferences
      *
      */
-    public void login(String mail, String password, LoginCallback callback)
+    public void login(String mail, String password, final LoginCallback callback)
     {
-        User user = new User();
-        user.setType(User.PROFESSOR);
-        user.setMail(mail);
-        user.setName(mail);
-        user.setId("142");
-        String authorizationToken = "acxdsfdfdjfdfderwrq";
 
-        setCurrentUser(user, authorizationToken);
+        Ion.with(context)
+                .load("POST", "http://library-themonster.rhcloud.com/users/login.json")
+                .setBodyParameter("mail", mail)
+                .setBodyParameter("password", password)
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // failed to connect
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "log in result = " + result);
 
-        callback.success(user, authorizationToken);
+                        // parse response
+                        try
+                        {
+                            // check if failed
+                            JSONObject resultJson = new JSONObject(result);
+                            int status = resultJson.getInt("status");
+                            if (status != 1)
+                            {
+                                callback.fail("Failed");
+                                return;
+                            }
+
+                            // parse response
+                            JSONObject response = resultJson.getJSONObject("response");
+                            JSONObject userObject = response.getJSONObject("user");
+                            User user = User.parseFromJson(userObject);
+                            String token = userObject.getString("token");
+                            setCurrentUser(user, token);
+                            callback.success(user, token);
+
+                        } catch (JSONException e1)
+                        {
+                            e1.printStackTrace();
+                            callback.fail(e1.getMessage());
+                        }
+
+                    }
+                });
 
     }
 

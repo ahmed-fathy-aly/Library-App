@@ -16,9 +16,9 @@
 
     <string-array
         name="userType">
-        <item>Admin</item>
-        <item>Student</item>
-        <item>Professor</item>
+        <item>admin</item>
+        <item>student</item>
+        <item>professor</item>
     </string-array>
 
 </resources>
