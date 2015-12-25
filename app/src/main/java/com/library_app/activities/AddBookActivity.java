@@ -41,7 +41,8 @@ public class AddBookActivity extends AppCompatActivity
     ProgressBar progressBar;
 
     /* fields */
-    File imageFile;
+    private boolean addedFile;
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -97,14 +98,6 @@ public class AddBookActivity extends AppCompatActivity
         });
 
 
-        // prepare temp image file
-        try
-        {
-            imageFile = PhotoFileUtils.createImageFile();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -135,16 +128,15 @@ public class AddBookActivity extends AppCompatActivity
     private void addBook()
     {
         // gather data
-        String isbn = editTextISBN.getText().toString();
+        final String isbn = editTextISBN.getText().toString();
         String isn = editTextISN.getText().toString();
         String title = editTextTitle.getText().toString();
         String author = editTextAuthor.getText().toString();
-        Log.e("Game", "file size = " + imageFile.getTotalSpace());
 
         // upload new book
         progressBar.setVisibility(View.VISIBLE);
         buttonAddBook.setVisibility(View.INVISIBLE);
-        AdminController controller = new AdminController(this);
+        final AdminController controller = new AdminController(this);
 
         // make the callback (to handle the request result)
         AddBookCallback callback = new AddBookCallback()
@@ -152,9 +144,33 @@ public class AddBookActivity extends AppCompatActivity
             @Override
             public void success()
             {
-                progressBar.setVisibility(View.INVISIBLE);
-                buttonAddBook.setVisibility(View.VISIBLE);
-                Snackbar.make(content, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+                if (!addedFile)
+                {
+                    progressBar.setVisibility(View.INVISIBLE);
+                    buttonAddBook.setVisibility(View.VISIBLE);
+                    Snackbar.make(content, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // add the file
+                controller.setImage(isbn, new File(uri.getPath()), new AddBookCallback()
+                {
+                    @Override
+                    public void success()
+                    {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        buttonAddBook.setVisibility(View.VISIBLE);
+                        Snackbar.make(content, getString(R.string.success), Snackbar.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void fail(String message)
+                    {
+                        progressBar.setVisibility(View.INVISIBLE);
+                        buttonAddBook.setVisibility(View.VISIBLE);
+                        Snackbar.make(content, message, Snackbar.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -170,7 +186,7 @@ public class AddBookActivity extends AppCompatActivity
         if (checkBoxIsCopy.isChecked())
             controller.addCopy(isbn, isn, callback);
         else
-            controller.addBook(isbn, isn, title, author, imageFile, callback);
+            controller.addBook(isbn, isn, title, author, callback);
 
     }
 
@@ -190,12 +206,19 @@ public class AddBookActivity extends AppCompatActivity
             switch (requestCode)
             {
                 case Crop.REQUEST_PICK:
-                    Crop.of(data.getData(), Uri.fromFile(imageFile)).asSquare().start(this);
+                    try
+                    {
+                        Crop.of(data.getData(), Uri.fromFile(PhotoFileUtils.createImageFile(this))).asSquare().start(this);
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                     break;
 
                 case Crop.REQUEST_CROP:
-                    Uri uri = Crop.getOutput(data);
+                    uri = Crop.getOutput(data);
                     imageViewCover.setImageURI(uri);
+                    addedFile = true;
                     break;
             }
     }

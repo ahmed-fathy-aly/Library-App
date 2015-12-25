@@ -6,7 +6,7 @@
     <string name="canUpvote">canVote</string>
     <string name="canReserve">canReserver</string>
     <string name="canChangeReservation">canChangeReservation</string>
-
+    <string name="host">http://library-themonster.rhcloud.com/</string>
     <string-array
         name="searchCriteria">
         <item>Title</item>
@@ -21,4 +21,11 @@
         <item>professor</item>
     </string-array>
 
+    <string-array
+        name="reservationFilter">
+        <item>All</item>
+        <item>Reserved</item>
+        <item>Lent</item>
+        <item>Returned</item>
+    </string-array>
 </resources>

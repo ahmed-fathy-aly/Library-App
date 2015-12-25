@@ -48,17 +48,12 @@
                     android:orientation="horizontal">
 
 
-                    <Spinner
-                        android:id="@+id/spinnerSearchCriteria"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/searchCriteria"></Spinner>
-
                     <EditText
                         android:id="@+id/editTextSearch"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginLeft="5dp"
                         android:hint="Search"/>
 
 

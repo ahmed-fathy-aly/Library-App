@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.library_app.R;
 import com.library_app.callbacks.LoginCallback;
 import com.library_app.callbacks.SignUpCallback;
 import com.library_app.model.User;
@@ -42,11 +43,12 @@ public class AuthenticationController
     {
 
         Ion.with(context)
-                .load("POST", "http://library-themonster.rhcloud.com/users/create.json")
+                .load("POST", context.getString(R.string.host) + "users/create.json")
                 .setBodyParameter("mail", mail)
                 .setBodyParameter("name", name)
                 .setBodyParameter("password", password)
                 .setBodyParameter("type", type)
+                .setBodyParameter("code", universityCode)
                 .asString()
                 .setCallback(new FutureCallback<String>()
                 {
@@ -95,13 +97,12 @@ public class AuthenticationController
      * logs in a user that has signed up before
      * the result will have the user details (the ones sent)and an authentication token
      * these results will be saved in the pereferences
-     *
      */
     public void login(String mail, String password, final LoginCallback callback)
     {
 
         Ion.with(context)
-                .load("POST", "http://library-themonster.rhcloud.com/users/login.json")
+                .load("POST", context.getString(R.string.host) + "users/login.json")
                 .setBodyParameter("mail", mail)
                 .setBodyParameter("password", password)
                 .asString()
@@ -162,6 +163,7 @@ public class AuthenticationController
         editor.clear();
         editor.commit();
     }
+
     /**
      * saves the user's info to the preferences
      */
@@ -179,9 +181,10 @@ public class AuthenticationController
 
     /**
      * gets the user info stored in preferences
+     *
      * @return the logged in user
      */
-    public  User getCurrentUser()
+    public User getCurrentUser()
     {
         SharedPreferences pref = context.getSharedPreferences(KEY_PREFERENCES_NAME, context.MODE_PRIVATE);
 

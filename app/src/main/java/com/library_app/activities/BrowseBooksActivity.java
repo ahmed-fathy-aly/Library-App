@@ -41,7 +41,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
     SwipeRefreshLayout swipeRefresh;
     EditText editTextSearch;
     ImageButton imageButtonSearch;
-    Spinner spinnerSearchCriteria;
 
     /* fields */
     BookCardsAdapter adapterCards;
@@ -67,7 +66,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
         navigationDrawer = NavigationUtils.setupNavigationBar(this, 1, toolbar);
         editTextSearch = (EditText) findViewById(R.id.editTextSearch);
         imageButtonSearch = (ImageButton) findViewById(R.id.imageButtonSearch);
-        spinnerSearchCriteria = (Spinner) findViewById(R.id.spinnerSearchCriteria);
 
         // reference views
         recyclerViewGroups = (RecyclerView) findViewById(R.id.recyclerViewBooks);
@@ -129,8 +127,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
 
         ReaderController controller = new ReaderController(this);
         String str = editTextSearch.getText().toString();
-        String searchcriteria = (String) spinnerSearchCriteria.getSelectedItem();
-        controller.searchBooks(searchcriteria, str, new SearchBooksCallback()
+        controller.getBooks(str, new GetBooksCallback()
         {
             @Override
             public void success(List<Book> books)
@@ -186,7 +183,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
             }
         });
         ReaderController controller = new ReaderController(this);
-        controller.getBooks(new GetBooksCallback()
+        controller.getBooks("", new GetBooksCallback()
         {
             @Override
             public void success(List<Book> books)

@@ -1,5 +1,8 @@
 package com.library_app.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by ahmed on 12/17/2015.
  */
@@ -81,5 +84,22 @@ public class Book
     public void setnUpvotes(int nUpvotes)
     {
         this.nUpvotes = nUpvotes;
+    }
+
+    /* methods */
+
+    public static Book parseFromJson(JSONObject jsonObject) throws JSONException
+    {
+        Book book = new Book();
+
+        book.setIsbn(jsonObject.getString("isbn"));
+        book.setAuthor(jsonObject.getString("author"));
+        book.setTitle(jsonObject.getString("title"));
+        if (!jsonObject.isNull("img_url"))
+            book.setImageUrl(jsonObject.getString("img_url"));
+        book.setnUpvotes(jsonObject.getInt("nUpvotes"));
+        book.setAvailable(jsonObject.getInt("available") != 0);
+
+        return book;
     }
 }

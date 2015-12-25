@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.library_app.R;
@@ -34,6 +36,7 @@ public class ReservationsActivity extends AppCompatActivity implements Reservati
     private Drawer navigationDrawer;
     private RecyclerView recyclerViewReservations;
     private SwipeRefreshLayout swipeRefresh;
+    Spinner spinnerReservationFilter;
     private ReservationCardAdapter adapterReservations;
 
     /* fields */
@@ -57,6 +60,7 @@ public class ReservationsActivity extends AppCompatActivity implements Reservati
         // reference views
         recyclerViewReservations = (RecyclerView) findViewById(R.id.recyclerViewReservations);
         swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+        spinnerReservationFilter = (Spinner) findViewById(R.id.spinnerReservationFilter);
 
         // setup listeners
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -67,6 +71,21 @@ public class ReservationsActivity extends AppCompatActivity implements Reservati
                 loadReservations();
             }
         });
+      spinnerReservationFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+      {
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+          {
+              String filter = (String) spinnerReservationFilter.getSelectedItem();
+              adapterReservations.filterData(filter);
+          }
+
+          @Override
+          public void onNothingSelected(AdapterView<?> parent)
+          {
+
+          }
+      });
 
         // setup list
         adapterReservations = new ReservationCardAdapter(this, new AuthenticationController(this).getCurrentUser().canChangeReservation());
@@ -100,6 +119,7 @@ public class ReservationsActivity extends AppCompatActivity implements Reservati
                 swipeRefresh.setRefreshing(true);
             }
         });
+        spinnerReservationFilter.setEnabled(false);
 
         // download the reservations
         ReaderController controller = new ReaderController(this);
@@ -117,7 +137,10 @@ public class ReservationsActivity extends AppCompatActivity implements Reservati
 
                     }
                 });
-                adapterReservations.setData(reservations);
+                spinnerReservationFilter.setEnabled(true);
+                adapterReservations.setOriginalData(reservations);
+                String filter = (String) spinnerReservationFilter.getSelectedItem();
+                adapterReservations.filterData(filter);
             }
 
             @Override

@@ -1,6 +1,9 @@
 package com.library_app.Utils;
 
+import android.content.Context;
 import android.os.Environment;
+
+import com.library_app.model.Contact;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,12 +18,12 @@ public class PhotoFileUtils
 {
 
 
-    public static File createImageFile() throws IOException
+    public static File createImageFile(Context context) throws IOException
     {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStorageDirectory();
+        File storageDir = context.getCacheDir();
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */

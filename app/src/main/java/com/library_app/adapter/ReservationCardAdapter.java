@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
 import com.library_app.R;
 import com.library_app.Utils.TimeFormatUtils;
 import com.library_app.model.Reservation;
@@ -24,7 +25,9 @@ public class ReservationCardAdapter extends RecyclerView.Adapter<ReservationCard
     /* fields */
     private final Context context;
     private final boolean canChangeReservation;
+    private List<Reservation> originalData;
     private List<Reservation> data;
+
     private Listener listener;
 
     public ReservationCardAdapter(Context context, boolean canChangeReservation)
@@ -32,6 +35,8 @@ public class ReservationCardAdapter extends RecyclerView.Adapter<ReservationCard
         this.context = context;
         this.canChangeReservation = canChangeReservation;
         this.data = new ArrayList<>();
+        this.originalData = new ArrayList<>();
+
     }
 
     /**
@@ -45,10 +50,27 @@ public class ReservationCardAdapter extends RecyclerView.Adapter<ReservationCard
     /**
      * updates the data and updates UI
      */
-    public void setData(List<Reservation> newData)
+    public void setOriginalData(List<Reservation> newData)
+    {
+        originalData.clear();
+        originalData.addAll(newData);
+    }
+
+    /**
+     * @param filter All
+     *               Reserved
+     *               Lent
+     *               Returned
+     */
+    public void filterData(String filter)
     {
         data.clear();
-        data.addAll(newData);
+        for (Reservation reservation : originalData)
+            if (filter.equals("All")
+                    || (filter.equals("Reserved") && reservation.getLendDate() == null)
+                    || (filter.equals("Lent") && reservation.getLendDate() != null && reservation.getReturnDate() == null  )
+                    || (filter.equals("Returned") && reservation.getLendDate() != null && reservation.getReturnDate() != null ))
+                data.add(reservation);
         notifyDataSetChanged();
     }
 

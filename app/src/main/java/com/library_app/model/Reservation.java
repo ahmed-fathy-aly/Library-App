@@ -1,5 +1,10 @@
 package com.library_app.model;
 
+import com.library_app.Utils.TimeFormatUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
 
 /**
@@ -84,5 +89,20 @@ public class Reservation
     public void setReturnDate(Calendar returnDate)
     {
         this.returnDate = returnDate;
+    }
+
+    public static Reservation parseFromJson(JSONObject json) throws JSONException
+    {
+        Reservation reservation = new Reservation();
+
+        reservation.setId(json.getString("reservation_code"));
+        reservation.setUser(User.parseFromJson(json.getJSONObject("user")));
+        reservation.setBook(Book.parseFromJson(json.getJSONObject("book")));
+        reservation.setDeadlineDate(TimeFormatUtils.parseCalendar(json.getString("return_deadline")));
+        if (!json.isNull("lending_date"))
+            reservation.setLendDate(TimeFormatUtils.parseCalendar(json.getString("lending_date")));
+        if (!json.isNull("return_date"))
+            reservation.setReturnDate(TimeFormatUtils.parseCalendar(json.getString("return_date")));
+        return reservation;
     }
 }

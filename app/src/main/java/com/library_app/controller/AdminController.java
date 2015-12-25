@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.library_app.R;
 import com.library_app.callbacks.AddBookCallback;
 import com.library_app.callbacks.MarkAsLentCallback;
 import com.library_app.callbacks.MarkAsReturnedCallback;
@@ -39,13 +40,11 @@ public class AdminController extends ReaderController
      * @param isn       identifier for the copy
      * @param title     book's titles (if it's a new book)
      * @param author    book's author (if it's a new book)
-     * @param imageFile file containing the cover image of the book (leave this one if it's hard to upload it)
      */
-    public void addBook(String isbn, String isn, String title, String author, File imageFile, final AddBookCallback callback)
+    public void addBook(String isbn, String isn, String title, String author, final AddBookCallback callback)
     {
-        Log.e("Game", "token = " + new AuthenticationController(context).getAuthorizationToken());
         Ion.with(context)
-                .load("POST", "http://library-themonster.rhcloud.com/books/create.json")
+                .load("POST", context.getString(R.string.host) + "books/create.json")
                 .addHeader("Authentication ", "Token " + new AuthenticationController(context).getAuthorizationToken())
                 .setBodyParameter("isbn", isbn)
                 .setBodyParameter("isn", isn)
@@ -74,7 +73,8 @@ public class AdminController extends ReaderController
                             if (status != 1)
                                 callback.fail("Failed");
                             else
-                                callback.success();;
+                                callback.success();
+                            ;
                             return;
                         } catch (JSONException e1)
                         {
@@ -92,25 +92,160 @@ public class AdminController extends ReaderController
      * @param isbn the isbn of the original book
      * @param isn  the isn of the copy
      */
-    public void addCopy(String isbn, String isn, AddBookCallback callback)
+    public void addCopy(String isbn, String isn, final AddBookCallback callback)
     {
-        callback.success();
+        Ion.with(context)
+                .load("POST", context.getString(R.string.host) + "books/add_copy.json")
+                .addHeader("Authentication", "Token " + new AuthenticationController(context).getAuthorizationToken())
+                .setBodyParameter("isbn", isbn)
+                .setBodyParameter("isn", isn)
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // check errors
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "add copy response = " + result);
+
+                        // check if failed
+                        try
+                        {
+                            JSONObject resultJson = new JSONObject(result);
+                            int status = resultJson.getInt("status");
+
+                            if (status != 1)
+                                callback.fail("Failed");
+                            else
+                                callback.success();
+                            ;
+                            return;
+                        } catch (JSONException e1)
+                        {
+                            e1.printStackTrace();
+                        }
+
+                    }
+                });
+    }
+
+    public void setImage(String isbn, File imageFile, final AddBookCallback callback)
+    {
+        Log.e("Game", isbn + " uploaded file size = " + imageFile.getTotalSpace());
+        Ion.with(context)
+                .load("POST", context.getString(R.string.host) + "books/add_image.json")
+                .addHeader("Authentication", "Token " + new AuthenticationController(context).getAuthorizationToken())
+                .setMultipartFile("file", imageFile)
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // check errors
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "add image response = " + result);
+
+                        callback.success();
+                    }
+                });
     }
 
     /**
      * the admins marks the reservation as lent now (the user comes and takes the book )
      */
-    public void markAsLent(Reservation reservation, MarkAsLentCallback callback)
+    public void markAsLent(Reservation reservation, final MarkAsLentCallback callback)
     {
-        callback.success();
+        Log.e("Game", "id = " + reservation.getId());
+        Ion.with(context)
+                .load("POST", context.getString(R.string.host) + "reservations/lend.json")
+                .addHeader("Authentication", "Token " + new AuthenticationController(context).getAuthorizationToken())
+                .setBodyParameter("reservation_code", reservation.getId())
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // check errors
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "mark as lentresponse = " + result);
+
+                        // check if failed
+                        try
+                        {
+                            JSONObject resultJson = new JSONObject(result);
+                            int status = resultJson.getInt("status");
+
+                            if (status != 1)
+                                callback.fail("Failed");
+                            else
+                                callback.success();
+                            return;
+                        } catch (JSONException e1)
+                        {
+                            e1.printStackTrace();
+                        }
+
+                    }
+                });
     }
 
     /**
      * the admins marks the reservation as returned now (the user comes and returns the book )
      */
-    public void markAsReturned(Reservation reservation, MarkAsReturnedCallback callback)
+    public void markAsReturned(Reservation reservation, final MarkAsReturnedCallback callback)
     {
-        callback.success();
+        Log.e("Game", "id = " + reservation.getId());
+        Ion.with(context)
+                .load("POST", context.getString(R.string.host) + "reservations/return.json")
+                .addHeader("Authentication", "Token " + new AuthenticationController(context).getAuthorizationToken())
+                .setBodyParameter("reservation_code", reservation.getId())
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // check errors
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "mark as returned response = " + result);
+
+                        // check if failed
+                        try
+                        {
+                            JSONObject resultJson = new JSONObject(result);
+                            int status = resultJson.getInt("status");
+
+                            if (status != 1)
+                                callback.fail("Failed");
+                            else
+                                callback.success();
+                            return;
+                        } catch (JSONException e1)
+                        {
+                            e1.printStackTrace();
+                        }
+
+                    }
+                });
     }
 
 
