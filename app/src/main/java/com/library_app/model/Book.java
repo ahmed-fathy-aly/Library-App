@@ -16,6 +16,7 @@ public class Book
     String author;
     String imageUrl;
     boolean available;
+    boolean isFollowedByMe;
     int nUpvotes;
 
     /* constructors */
@@ -84,6 +85,16 @@ public class Book
     public void setnUpvotes(int nUpvotes)
     {
         this.nUpvotes = nUpvotes;
+    }
+
+    public boolean isFollowedByMe()
+    {
+        return isFollowedByMe;
+    }
+
+    public void setIsFollowedByMe(boolean isFollowedByMe)
+    {
+        this.isFollowedByMe = isFollowedByMe;
     }
 
     /* methods */

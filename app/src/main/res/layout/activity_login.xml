@@ -75,17 +75,6 @@
                     android:theme="@style/coloredButtonTheme"
                     />
 
-                <Button
-
-                    android:id="@+id/buttonSignUp"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_centerHorizontal="true"
-                    android:text="New member ? Sign up"
-                    android:textColor="@color/primary"
-                    />
-
 
                 <ProgressBar
                     android:id="@+id/progressBar"

@@ -34,18 +34,9 @@ public class LoginActivity extends AppCompatActivity
         editTextEmail = (EditText) findViewById(R.id.editTextUserEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         Button loginButton = (Button) findViewById(R.id.buttonLogIn);
-        Button signUpButton = (Button) findViewById(R.id.buttonSignUp);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        // set button listeners
-        signUpButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                onSignUpClicked();
-            }
-        });
+        // set listeners
         loginButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -91,13 +82,5 @@ public class LoginActivity extends AppCompatActivity
         });
     }
 
-    /**
-     * when the user asks to sign up
-     */
-    private void onSignUpClicked()
-    {
-        // go to the login activity
-        Intent intent = new Intent(this, SignUpActivity.class);
-        startActivity(intent);
-    }
+
 }

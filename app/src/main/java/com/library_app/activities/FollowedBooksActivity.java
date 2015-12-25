@@ -1,19 +1,17 @@
 package com.library_app.activities;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.library_app.R;
@@ -22,16 +20,14 @@ import com.library_app.adapter.BookCardsAdapter;
 import com.library_app.callbacks.FollowBookCallback;
 import com.library_app.callbacks.GetBooksCallback;
 import com.library_app.callbacks.ReserveBookCallback;
-import com.library_app.callbacks.SearchBooksCallback;
 import com.library_app.callbacks.UpvoteBookCallback;
-import com.library_app.controller.AuthenticationController;
 import com.library_app.controller.ReaderController;
 import com.library_app.model.Book;
 import com.mikepenz.materialdrawer.Drawer;
 
 import java.util.List;
 
-public class BrowseBooksActivity extends AppCompatActivity implements BookCardsAdapter.Listener
+public class FollowedBooksActivity extends AppCompatActivity implements BookCardsAdapter.Listener
 {
 
     /* UI */
@@ -39,8 +35,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
     View content;
     RecyclerView recyclerViewGroups;
     SwipeRefreshLayout swipeRefresh;
-    EditText editTextSearch;
-    ImageButton imageButtonSearch;
 
     /* fields */
     BookCardsAdapter adapterCards;
@@ -50,7 +44,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
     {
         // setup layout
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_browse_books);
+        setContentView(R.layout.activity_followed_books);
 
         // get extras
         boolean canUpvote = getIntent().getBooleanExtra(getString(R.string.canUpvote), false);
@@ -60,12 +54,10 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
         content = findViewById(R.id.content);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         TextView text = new TextView(this);
-        text.setText("Books");
+        text.setText("Followed Books");
         text.setTextAppearance(this, android.R.style.TextAppearance_Material_Widget_ActionBar_Title_Inverse);
         toolbar.addView(text);
-        navigationDrawer = NavigationUtils.setupNavigationBar(this, 1, toolbar);
-        editTextSearch = (EditText) findViewById(R.id.editTextSearch);
-        imageButtonSearch = (ImageButton) findViewById(R.id.imageButtonSearch);
+        navigationDrawer = NavigationUtils.setupNavigationBar(this, 5, toolbar);
 
         // reference views
         recyclerViewGroups = (RecyclerView) findViewById(R.id.recyclerViewBooks);
@@ -78,14 +70,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
             public void onRefresh()
             {
                 loadBooks();
-            }
-        });
-        imageButtonSearch.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                searchBooks();
             }
         });
 
@@ -101,65 +85,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
 
     }
 
-
-    /**
-     * searches for the book using the search criteria selected in the spinner and the substring in the search edit text
-     */
-    private void searchBooks()
-    {
-        // close the keyboard
-        View view = this.getCurrentFocus();
-        if (view != null)
-        {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-
-        // start swipe refersh refershing
-        swipeRefresh.post(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                swipeRefresh.setRefreshing(true);
-            }
-        });
-
-        ReaderController controller = new ReaderController(this);
-        String str = editTextSearch.getText().toString();
-        controller.getBooks(str, new GetBooksCallback()
-        {
-            @Override
-            public void success(List<Book> books)
-            {
-                swipeRefresh.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        swipeRefresh.setRefreshing(false);
-
-                    }
-                });
-                adapterCards.setData(books);
-            }
-
-            @Override
-            public void fail(String message)
-            {
-                swipeRefresh.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        swipeRefresh.setRefreshing(false);
-
-                    }
-                });
-                Snackbar.make(content, message, Snackbar.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     @Override
     public void onBackPressed()
@@ -183,7 +108,7 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
             }
         });
         ReaderController controller = new ReaderController(this);
-        controller.getBooks("", new GetBooksCallback()
+        controller.getFollowedBooks(new GetBooksCallback()
         {
             @Override
             public void success(List<Book> books)
@@ -194,11 +119,11 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
                     public void run()
                     {
                         swipeRefresh.setRefreshing(false);
-
                     }
                 });
+                for (Book book : books)
+                    book.setIsFollowedByMe(true);
                 adapterCards.setData(books);
-                loadFollowedBooks();
             }
 
             @Override
@@ -214,29 +139,6 @@ public class BrowseBooksActivity extends AppCompatActivity implements BookCardsA
                     }
                 });
                 Snackbar.make(content, message, Snackbar.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void loadFollowedBooks()
-    {
-        ReaderController controller = new ReaderController(this);
-        controller.getFollowedBooks(new GetBooksCallback()
-        {
-            @Override
-            public void success(List<Book> books)
-            {
-                for (Book followedBook : books)
-                    for(Book book : adapterCards.getData())
-                        if (followedBook.getIsbn().equals(book.getIsbn()))
-                            book.setIsFollowedByMe(true);
-                adapterCards.notifyDataSetChanged();
-            }
-
-            @Override
-            public void fail(String message)
-            {
-
             }
         });
     }

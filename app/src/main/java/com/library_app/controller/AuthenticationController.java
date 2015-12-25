@@ -7,6 +7,7 @@ import android.util.Log;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.library_app.R;
+import com.library_app.callbacks.AddUserCallback;
 import com.library_app.callbacks.LoginCallback;
 import com.library_app.callbacks.SignUpCallback;
 import com.library_app.model.User;
@@ -205,5 +206,6 @@ public class AuthenticationController
         SharedPreferences pref = context.getSharedPreferences(KEY_PREFERENCES_NAME, context.MODE_PRIVATE);
         return pref.getString("token", "");
     }
+
 
 }

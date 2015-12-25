@@ -8,7 +8,9 @@ import android.view.View;
 
 import com.library_app.R;
 import com.library_app.activities.AddBookActivity;
+import com.library_app.activities.AddUserActivity;
 import com.library_app.activities.BrowseBooksActivity;
+import com.library_app.activities.FollowedBooksActivity;
 import com.library_app.activities.ReservationsActivity;
 import com.library_app.activities.StartActivity;
 import com.library_app.controller.AuthenticationController;
@@ -58,13 +60,15 @@ public class NavigationUtils
         if (user.getType().equals(User.ADMIN))
         {
             builder.addDrawerItems(new PrimaryDrawerItem().withIdentifier(1).withName("Browse Books")
-                    , new PrimaryDrawerItem().withIdentifier(2).withName("Add Book")
                     , new PrimaryDrawerItem().withIdentifier(3).withName("Reservations")
+                    , new PrimaryDrawerItem().withIdentifier(2).withName("Add Book")
+                    , new PrimaryDrawerItem().withIdentifier(4).withName("Add User")
                     , new DividerDrawerItem()
                     , new PrimaryDrawerItem().withIdentifier(10).withName("Log Out"));
         } else if (user.getType().equals(User.STUDENT) || user.getType().equals(User.PROFESSOR))
         {
             builder.addDrawerItems(new PrimaryDrawerItem().withIdentifier(1).withName("Browse Books")
+                    , new PrimaryDrawerItem().withIdentifier(5).withName("Followed Books")
                     , new PrimaryDrawerItem().withIdentifier(3).withName("Reservations")
                     , new DividerDrawerItem()
                     , new PrimaryDrawerItem().withIdentifier(10).withName("Log Out"));
@@ -80,7 +84,7 @@ public class NavigationUtils
                     return false;
 
                 // launch another activity
-                if (id <= 3)
+                if (id <= 5)
                 {
                     // select the activity
                     final Intent intent = new Intent();
@@ -90,6 +94,10 @@ public class NavigationUtils
                         intent.setClass(activity, AddBookActivity.class);
                     else if (id == 3)
                         intent.setClass(activity, ReservationsActivity.class);
+                    else if (id == 4)
+                        intent.setClass(activity, AddUserActivity.class);
+                    else if (id == 5)
+                        intent.setClass(activity, FollowedBooksActivity.class);
 
                     // add the extras
                     intent.putExtra(activity.getString(R.string.canUpvote), user.canVote());

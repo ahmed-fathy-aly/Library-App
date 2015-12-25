@@ -7,9 +7,11 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.library_app.R;
 import com.library_app.callbacks.AddBookCallback;
+import com.library_app.callbacks.AddUserCallback;
 import com.library_app.callbacks.MarkAsLentCallback;
 import com.library_app.callbacks.MarkAsReturnedCallback;
 import com.library_app.model.Reservation;
+import com.library_app.model.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,10 +38,10 @@ public class AdminController extends ReaderController
     /**
      * adds a new book (not a copy)
      *
-     * @param isbn      identifier for the book
-     * @param isn       identifier for the copy
-     * @param title     book's titles (if it's a new book)
-     * @param author    book's author (if it's a new book)
+     * @param isbn   identifier for the book
+     * @param isn    identifier for the copy
+     * @param title  book's titles (if it's a new book)
+     * @param author book's author (if it's a new book)
      */
     public void addBook(String isbn, String isn, String title, String author, final AddBookCallback callback)
     {
@@ -242,6 +244,54 @@ public class AdminController extends ReaderController
                         } catch (JSONException e1)
                         {
                             e1.printStackTrace();
+                        }
+
+                    }
+                });
+    }
+
+    /**
+     * signs up a user
+     */
+    public void addUser(String type, String mail, String password, String name, String universityCode, String bookLimit, final AddUserCallback callback)
+    {
+        Ion.with(context)
+                .load("POST", context.getString(R.string.host) + "users/create.json")
+                .addHeader("Authentication", "Token " + new AuthenticationController(context).getAuthorizationToken())
+                .setBodyParameter("mail", mail)
+                .setBodyParameter("name", name)
+                .setBodyParameter("password", password)
+                .setBodyParameter("type", type)
+                .setBodyParameter("code", universityCode)
+                .setBodyParameter("book_limit", universityCode)
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // check errors
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "add user result = " + result);
+
+                        try
+                        {
+                            // check if failed
+                            JSONObject resultJson = new JSONObject(result);
+                            int status = resultJson.getInt("status");
+                            if (status != 1)
+                                callback.fail("Failed");
+                            else
+                                callback.success();
+
+                        } catch (JSONException e1)
+                        {
+                            e1.printStackTrace();
+                            callback.fail(e1.getMessage());
                         }
 
                     }

@@ -31,7 +31,7 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
     boolean canUpvote;
 
     /* constructor */
-    public BookCardsAdapter(Context context, boolean canReserve, boolean canUpvote)
+    public BookCardsAdapter(Context context, boolean canReserve, boolean canUpvote )
     {
         this.context = context;
         this.data = new ArrayList<>();
@@ -77,6 +77,15 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
         holder.textViewBookTitle.setText(book.getTitle());
         holder.textViewnUpvotes.setText(book.getnUpvotes() + "");
         holder.buttonReserverOrFollow.setText(book.isAvailable() ? "RESERVE" : "FOLLOW");
+        if (!book.isAvailable() && book.isFollowedByMe())
+        {
+            holder.buttonReserverOrFollow.setText("FOLLOWED");
+            holder.buttonReserverOrFollow.setEnabled(false);
+        }
+        else
+            holder.buttonReserverOrFollow.setEnabled(true);
+
+
         if (book.getImageUrl() != null)
         {
             Ion.with(holder.imageViewBook)
@@ -89,6 +98,11 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
     public int getItemCount()
     {
         return data.size();
+    }
+
+    public List<Book> getData()
+    {
+        return data;
     }
 
 

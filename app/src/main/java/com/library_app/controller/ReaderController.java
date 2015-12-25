@@ -291,4 +291,52 @@ public class ReaderController
                 });
     }
 
+    public void getFollowedBooks(final GetBooksCallback callback)
+    {
+        Ion.with(context)
+                .load("GET", context.getString(R.string.host) + "books/followed.json")
+                .addHeader("Authentication", "Token " + new AuthenticationController(context).getAuthorizationToken())
+                .asString()
+                .setCallback(new FutureCallback<String>()
+                {
+                    @Override
+                    public void onCompleted(Exception e, String result)
+                    {
+                        // check errors
+                        if (e != null)
+                        {
+                            callback.fail(e.getMessage());
+                            return;
+                        }
+                        Log.e("Game", "get books result = " + result);
+
+                        try
+                        {
+                            // check status
+                            JSONObject resultJson = new JSONObject(result);
+                            int status = resultJson.getInt("status");
+                            if (status != 1)
+                            {
+                                callback.fail("Failed");
+                                return;
+                            }
+
+                            // parse books
+                            JSONObject responseJson = resultJson.getJSONObject("response");
+                            JSONArray booksJson = responseJson.getJSONArray("books");
+                            List<Book> books = new ArrayList<Book>();
+                            for (int i = 0; i < booksJson.length(); i++)
+                                books.add(Book.parseFromJson(booksJson.getJSONObject(i)));
+                            callback.success(books);
+                            return;
+                        } catch (JSONException e1)
+                        {
+                            e1.printStackTrace();
+                            callback.fail(e1.getMessage());
+                            return;
+                        }
+                    }
+                });
+
+    }
 }
