@@ -75,6 +75,7 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
 
         // set data to view
         holder.textViewBookTitle.setText(book.getTitle());
+        holder.textViewBookISBN.setText("#" +book.getIsbn());
         holder.textViewnUpvotes.setText(book.getnUpvotes() + "");
         holder.buttonReserverOrFollow.setText(book.isAvailable() ? "RESERVE" : "FOLLOW");
         if (!book.isAvailable() && book.isFollowedByMe())
@@ -111,6 +112,7 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
 
         ImageView imageViewBook;
         TextView textViewBookTitle;
+        TextView textViewBookISBN;
         TextView textViewnUpvotes;
         ImageButton imageButtonUpvote;
         Button buttonReserverOrFollow;
@@ -122,6 +124,7 @@ public class BookCardsAdapter extends RecyclerView.Adapter<BookCardsAdapter.View
             // reference views
             imageViewBook = (ImageView) view.findViewById(R.id.imageViewBook);
             textViewBookTitle = (TextView) view.findViewById(R.id.textViewBookName);
+            textViewBookISBN= (TextView) view.findViewById(R.id.textViewBookISBN);
             buttonReserverOrFollow = (Button) view.findViewById(R.id.buttonReserverOrFollow);
             textViewnUpvotes = (TextView) view.findViewById(R.id.textViewNUpvotes);
             imageButtonUpvote = (ImageButton) view.findViewById(R.id.imageButtonUpvote);

@@ -142,6 +142,7 @@ public class AdminController extends ReaderController
         Ion.with(context)
                 .load("POST", context.getString(R.string.host) + "books/add_image.json")
                 .addHeader("Authentication", "Token " + new AuthenticationController(context).getAuthorizationToken())
+                .setMultipartParameter("isbn", isbn)
                 .setMultipartFile("file", imageFile)
                 .asString()
                 .setCallback(new FutureCallback<String>()
@@ -263,7 +264,7 @@ public class AdminController extends ReaderController
                 .setBodyParameter("password", password)
                 .setBodyParameter("type", type)
                 .setBodyParameter("code", universityCode)
-                .setBodyParameter("book_limit", universityCode)
+                .setBodyParameter("book_limit", bookLimit)
                 .asString()
                 .setCallback(new FutureCallback<String>()
                 {
